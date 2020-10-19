@@ -1,0 +1,18 @@
+---
+- name: install prerequisits
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+      - mariadb-server
+      - php-bcmath
+      - php-curl
+      - php-gd
+      - php-gmp
+      - php-imagick
+      - php-intl
+      - php-mbstring
+      - php-mysql
+      - php-xml
+      - php-zip
+  notify: secure mysql
