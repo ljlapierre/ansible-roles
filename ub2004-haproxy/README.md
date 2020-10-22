@@ -11,39 +11,26 @@ Cloudflare DNS
 Role Variables
 --------------
 
-site: 'example.com'
-email: 'administrator@example.com'
-cloudflare_api_key: 'SECRET_KEY'
+##### ```site: 'example.com'```
+The site variable will be the "wildcard" domain served. For example, this site would handle example.com, site1.example.com, site2.example.com, etc.
 
-- site: 'example.com'
-The site variable will be the "wildcard" domain served. 
+##### ```email: 'administrator@example.com'```
+The email variable handles both the Let's Encrypt registration as well as the email associated with your Cloudflare account. If this is different for you you'll need to update one of templates/cloudflare, or tasks/main.yml
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
-
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+##### ```cloudflare_api_key: 'SECRET_KEY'```
+This is your global API key for cloudflare. The ```python3-certbot-dns-cloudflare``` package in Ubuntu 20.04 does not yet support API tokens, you'll need to provide the global API key here. Hopefully this will change in Ubuntu 22.04
 
 Example Playbook
 ----------------
 
-- hosts: int-proxy-01
-  become: yes
-  vars:
-    site: 'example.com'
-    email: 'administrator@example.com'
-    cloudflare_api_key: 'SECRET_KEY'
-  roles:
-    - ub2004-haproxy
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-
-
-    - hosts: servers
+    - hosts: haproxy-server
+      become: yes
+      vars:
+        site: 'example.com'
+        email: 'administrator@example.com'
+        cloudflare_api_key: 'SECRET_KEY'
       roles:
-         - { role: username.rolename, x: 42 }
+        - ub2004-haproxy
 
 License
 -------
