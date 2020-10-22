@@ -53,7 +53,7 @@ MIT
 Author Information
 ------------------
 
-Lyndon Lapierre
-https://t.me/ljlapierre
-https://www.ljlapierre.com
+Lyndon Lapierre  
+https://t.me/ljlapierre  
+https://www.ljlapierre.com  
 https://github.com/ljlapierre
