@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+cat /etc/letsencrypt/live/{{ site }}/fullchain.pem /etc/letsencrypt/live/{{ site }}/privkey.pem > /etc/haproxy/ssl/{{ site }}.pem
+systemctl reload haproxy

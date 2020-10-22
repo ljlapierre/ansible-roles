@@ -1,0 +1,22 @@
+---
+- name: set timezone
+  timezone:
+    name: '{{ timezone }}'
+  when: 'timezone is defined'
+- name: configure apt repository
+  replace:
+    path: /etc/apt/sources.list
+    regexp: '{{ item }} http://archive.ubuntu.com/ubuntu'
+    replace: '{{ item }} {{ apt_repository }}'
+  with_items:
+    - deb
+    - deb-src
+  when: 'apt_repository is defined'
+- name: install baseline packages
+  apt:
+    name:
+      - bash-completion
+      - ufw
+- name: enable firewall
+  ufw:
+    state: enabled

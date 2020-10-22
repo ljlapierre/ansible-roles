@@ -1,0 +1,67 @@
+---
+- name: install software
+  apt:
+    name:
+      - certbot
+      - haproxy
+      - haproxyctl
+      - python3-certbot-dns-cloudflare
+      - vim-haproxy
+- name: create ssl directory
+  file:
+    path: /etc/haproxy/ssl
+    state: directory
+    mode: '0700'
+- name: create cert file
+  file:
+    path: '/etc/haproxy/ssl/{{ site }}.pem'
+    state: touch
+    mode: '0600'
+    modification_time: preserve
+    access_time: preserve
+- name: create default dummy certificate
+  import_tasks: dummy_cert.yml
+- name: add cloudflare credentials
+  template:
+    src: cloudflare
+    dest: /etc/letsencrypt/cloudflare
+    mode: '0600'
+- name: configure letsencrypt
+  shell: 'certbot certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare -d {{ site }},*.{{ site }} --preferred-challenges dns-01 -n -m {{ email }} --agree-tos'
+  args:
+    creates: '/etc/letsencrypt/live/{{ site }}/cert.pem'
+  register: newcert
+- name: configuare haproxy cert
+  shell: 'cat /etc/letsencrypt/live/{{ site }}/fullchain.pem /etc/letsencrypt/live/{{ site }}/privkey.pem > /etc/haproxy/ssl/{{ site }}.pem'
+  when: newcert.changed
+- name: configure renewal hook
+  template:
+    src: renew
+    dest: /etc/letsencrypt/renewal-hooks/post/haproxy
+    mode: '0755'
+- name: create vim addons directories
+  file:
+    path: '/var/lib/vim/addons/{{ item }}'
+    state: directory
+  with_items:
+    - ftdetect
+    - syntax
+- name: install haproxy vim addon
+  file:
+    src: '/usr/share/vim/addons/{{ item }}/haproxy.vim'
+    dest: '/var/lib/vim/addons/{{ item }}/haproxy.vim'
+    state: link
+  with_items:
+    - ftdetect
+    - syntax
+- name: generate dh params
+  openssl_dhparam:
+    path: /etc/haproxy/dhparam.pem
+- name: open firewall
+  ufw:
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  with_items:
+    - '80'
+    - '443'

@@ -1,0 +1,36 @@
+---
+- block:
+    - name: ensure dummy cert exists
+      file:
+        path: /etc/haproxy/ssl/00-selfsign.pem
+        state: file
+        mode: '0600'
+  rescue:
+    - name: generate a private key
+      openssl_privatekey:
+        path: /etc/haproxy/ssl/00-selfsign.key
+    - name: generate a csr
+      openssl_csr:
+        path: /etc/haproxy/ssl/00-selfsign.csr
+        privatekey_path: /etc/haproxy/ssl/00-selfsign.key
+    - name: generate dummy cert
+      openssl_certificate:
+        path: /etc/haproxy/ssl/00-selfsign.crt
+        privatekey_path: /etc/haproxy/ssl/00-selfsign.key
+        csr_path: /etc/haproxy/ssl/00-selfsign.csr
+        provider: selfsigned
+    - name: create pem file for haproxy
+      shell: cat /etc/haproxy/ssl/00-selfsign.crt /etc/haproxy/ssl/00-selfsign.key > /etc/haproxy/ssl/00-selfsign.pem
+    - name: set proper permissions for dummy cert
+      file:
+        path: /etc/haproxy/ssl/00-selfsign.pem
+        state: file
+        mode: '0600'
+    - name: cleanup source files
+      file:
+        path: '/etc/haproxy/ssl/00-selfsign.{{ item }}'
+        state: absent
+      with_items:
+        - key
+        - csr
+        - crt
