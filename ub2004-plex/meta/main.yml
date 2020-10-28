@@ -1,6 +1,6 @@
 galaxy_info:
   author: Lyndon Lapierre
-  description: Installs haproxy & configures certbot for Let's Encrypt with intent to use the server as a primary SSL terminator
+  description: Installs plex media server via apt repository, as well as Intel driver packages. It also moves the plex cache to /var/cache, and opens the firewall.
   issue_tracker_url: https://github.com/ljlapierre/ansible-roles/issues
   license: MIT
   min_ansible_version: 2.9

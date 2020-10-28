@@ -18,7 +18,7 @@ The site variable will be the "wildcard" domain served. For example, this site w
 The email variable handles both the Let's Encrypt registration as well as the email associated with your Cloudflare account. If this is different for you you'll need to update one of templates/cloudflare, or tasks/main.yml
 
 ##### ```cloudflare_api_key: 'SECRET_KEY'```
-This is your global API key for cloudflare. The ```python3-certbot-dns-cloudflare``` package in Ubuntu 20.04 does not yet support API tokens, you'll need to provide the global API key here. Hopefully this will change in Ubuntu 22.04
+This is your global API key for cloudflare. The ```python3-certbot-dns-cloudflare``` package in Ubuntu 20.04 does not yet support API tokens, you'll need to provide the Global API Key found [HERE](https://dash.cloudflare.com/profile/api-tokens). Hopefully this will change in Ubuntu 22.04
 
 Example Playbook
 ----------------
@@ -42,5 +42,4 @@ Author Information
 
 Lyndon Lapierre  
 https://t.me/ljlapierre  
-https://www.ljlapierre.com  
 https://github.com/ljlapierre
