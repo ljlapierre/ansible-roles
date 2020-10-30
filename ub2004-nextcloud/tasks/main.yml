@@ -1,5 +1,5 @@
 ---
-- name: install prerequisits
+- name: install prerequisites
   apt:
     name:
       - apache2
@@ -15,4 +15,16 @@
       - php-mysql
       - php-xml
       - php-zip
-  notify: secure mysql
+  notify: secure mysqlexit
+- name: install apache config
+  template:
+    src: apache.conf
+    dest: /etc/apache2/sites-available/nextcloud.conf
+  notify: restart apache
+- name: download nextcloud source tar
+  get_url:
+    url: https://download.nextcloud.com/server/releases/latest.tar.bz2
+    dest: /usr/local/src/nextcloud.tar.bz2
+    checksum: md5:https://download.nextcloud.com/server/releases/latest.tar.bz2.md5
+  notify: remove nextcloud folder
+- meta: flush_handlers
