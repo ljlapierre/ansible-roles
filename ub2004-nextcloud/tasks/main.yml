@@ -1,30 +1,53 @@
 ---
 - name: install prerequisites
   apt:
-    name:
-      - apache2
-      - libapache2-mod-php
-      - mariadb-server
-      - php-bcmath
-      - php-curl
-      - php-gd
-      - php-gmp
-      - php-imagick
-      - php-intl
-      - php-mbstring
-      - php-mysql
-      - php-xml
-      - php-zip
-  notify: secure mysqlexit
+    name: '{{ apt_packages }}'
+  notify: secure mysql
 - name: install apache config
   template:
     src: apache.conf
     dest: /etc/apache2/sites-available/nextcloud.conf
   notify: restart apache
+- name: enable required apache modules
+  apache2_module:
+    name: '{{ item }}'
+  with_items: '{{ apache_modules }}'
+  notify: restart apache
+- name: configure php for nextcloud
+  lineinfile:
+    path: /etc/php/7.4/apache2/php.ini
+    regexp: '^{{ item.key }} ='
+    insertafter: '^\[PHP\]$'
+    line: '{{ item.key }} = {{ item.value }}'
+  loop: '{{ php_options | dict2items }}'
+  notify: restart apache
+- name: disable default apache site
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: restart apache
+- name: enable nextcloud apache site
+  file:
+    path: /etc/apache2/sites-enabled/nextcloud.conf
+    src: ../sites-available/nextcloud.conf
+    state: link
+  notify: restart apache
+- name: configure nextcloud cron job
+  cron:
+    name: nextcloud
+    cron_file: nextcloud
+    minute: '*/5'
+    user: www-data
+    job: php --define apc.enable_cli=1 -f /var/www/nextcloud/cron.php
 - name: download nextcloud source tar
   get_url:
     url: https://download.nextcloud.com/server/releases/latest.tar.bz2
     dest: /usr/local/src/nextcloud.tar.bz2
     checksum: md5:https://download.nextcloud.com/server/releases/latest.tar.bz2.md5
-  notify: remove nextcloud folder
-- meta: flush_handlers
+- name: untar nextcloud
+  unarchive:
+    src: /usr/local/src/nextcloud.tar.bz2
+    dest: /var/www
+    remote_src: yes
+    owner: www-data
+    group: www-data

@@ -1,10 +1,6 @@
 ---
 - name: secure mysql
   shell: echo -e "\nn\nY\nY\nY\nY\n" | mysql_secure_installation
-- name: remove nextcloud folder
-  file:
-    path: /var/www/nextcloud
-    state: absent
 - name: restart apache
   systemd:
     name: apache2
