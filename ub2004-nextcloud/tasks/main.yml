@@ -2,7 +2,7 @@
 - name: install prerequisites
   apt:
     name: '{{ apt_packages }}'
-  notify: secure mysql
+  notify: secure mariadb
 - name: install apache config
   template:
     src: apache.conf
