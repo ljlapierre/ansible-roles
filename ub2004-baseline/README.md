@@ -13,4 +13,5 @@ Author Information
 
 Lyndon Lapierre  
 https://t.me/ljlapierre  
+https://www.linkedin.com/in/lyndonlapierre  
 https://github.com/ljlapierre
