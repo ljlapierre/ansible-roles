@@ -1,0 +1,5 @@
+---
+- name: install prerequisites
+  apt:
+    name: '{{ apt_packages }}'
+  notify: secure mariadb
