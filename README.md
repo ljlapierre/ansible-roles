@@ -1,3 +1,17 @@
-# ansible-roles
+ansible-roles
+=============
 
-This repo is my first foray into putting infrastructure code up on github, my apologies if things are a little messy!
+This repository contains Ansible roles I use to configure infrastructure in my environment. PRs welcome!
+
+License
+-------
+
+MIT
+
+Author Information
+------------------
+
+Lyndon Lapierre  
+https://t.me/ljlapierre  
+https://linkedin.com/in/lyndonlapierre  
+https://github.com/ljlapierre
