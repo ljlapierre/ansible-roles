@@ -1,38 +1,49 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Installs & upgrades [Bookstack](https://www.bookstackapp.com), along with required software such as a LAMP stack & PHP Composer
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+If providing UFW IP, ensure the UFW firewall is enabled prior to running the role
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+##### ```site: 'bookstack.example.com'```
+The site variable configures the FQDN into the Apache site config
 
-Dependencies
-------------
+##### ```wkhtmltopdf_deburl: 'https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb'```
+*Optional*  
+See Bookstack's documentation on [PDF Rendering](https://www.bookstackapp.com/docs/admin/pdf-rendering/)  
+This URL link installs the deb package for wkhtmltopdf
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+##### ```ufw_fromip: '192.168.1.100'```
+*Optional*  
+If you're using UFW firewall in Ubuntu, you can provide an IP or subnet reference to allow to talk to Bookstack. If using a load balancer, you may want to restrict incoming traffic to that.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+    - hosts: bookstack-server
+      become: yes
+      vars:
+        site: 'bookstack.example.com'
+        wkhtmltopdf_deburl: 'https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb'
+        ufw_fromip: '192.168.1.100'
       roles:
-         - { role: username.rolename, x: 42 }
+        - ub2004-bookstack
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Lyndon Lapierre  
+https://t.me/ljlapierre  
+https://linkedin.com/in/lyndonlapierre  
+https://github.com/ljlapierre

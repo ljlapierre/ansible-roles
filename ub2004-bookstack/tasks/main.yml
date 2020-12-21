@@ -3,3 +3,54 @@
   apt:
     name: '{{ apt_packages }}'
   notify: secure mariadb
+- name: install wkhtmltopdf
+  apt:
+    deb: '{{ wkhtmltopdf_deburl }}'
+  when: 'wkhtmltopdf_deburl is defined'
+- name: enable rewrite apache module
+  apache2_module:
+    name: rewrite
+  notify: restart apache
+- name: configure apache for bookstack
+  template:
+    src: apache.conf
+    dest: /etc/apache2/sites-available/bookstack.conf
+  notify: restart apache
+- name: disable the default apache site
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: restart apache
+- name: enable bookstack apache site
+  file:
+    path: /etc/apache2/sites-enabled/bookstack.conf
+    state: link
+    src: ../sites-available/bookstack.conf
+  notify: restart apache
+- name: download bookstack
+  git:
+    repo: 'https://github.com/BookStackApp/BookStack.git'
+    dest: /var/www/bookstack
+    version: release
+  notify:
+    - install bookstack dependencies
+    - upgrade bookstack database
+    - clear bookstack cache
+    - clear bookstack view
+- name: set apache-writable folder permissions
+  file:
+    path: '/var/www/bookstack/{{ item }}'
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+  with_items:
+    - bootstrap/cache
+    - public/uploads
+    - storage
+- name: open firewall to load balancer
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    name: Apache
+  when: 'ufw_fromip is defined'

@@ -5,3 +5,19 @@
   systemd:
     name: apache2
     state: restarted
+- name: install bookstack dependencies
+  shell: composer install --no-dev
+  args:
+    chdir: /var/www/bookstack
+- name: upgrade bookstack database
+  shell: php artisan migrate --force --no-interaction
+  args:
+    chdir: /var/www/bookstack
+- name: clear bookstack cache
+  shell: 'php artisan cache:clear'
+  args:
+    chdir: /var/www/bookstack
+- name: clear bookstack view
+  shell: 'php artisan view:clear'
+  args:
+    chdir: /var/www/bookstack
