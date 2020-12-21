@@ -1,4 +1,4 @@
-Role Name
+ub2004-bookstack
 =========
 
 Installs & upgrades [Bookstack](https://www.bookstackapp.com), along with required software such as a LAMP stack & PHP Composer

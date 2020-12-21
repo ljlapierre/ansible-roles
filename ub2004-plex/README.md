@@ -1,4 +1,4 @@
-Role Name
+ub2004-plex
 =========
 
 Installs plex media server via apt repository, as well as Intel driver packages. It also moves the plex cache to /var/cache, and opens the firewall.

@@ -1,0 +1,43 @@
+---
+- name: install prerequisites
+  apt:
+    name:
+      - git
+      - python3
+      - python3-setuptools
+- name: pull tautulli from git
+  git:
+    repo: 'https://github.com/Tautulli/Tautulli.git'
+    dest: /opt/Tautulli
+  notify: restart tautulli
+- name: create system user
+  user:
+    name: tautulli
+    system: yes
+- name: create app directory
+  file:
+    path: /home/tautulli/data
+    state: directory
+    owner: tautulli
+    group: tautulli
+- name: create systemd service
+  copy:
+    src: /opt/Tautulli/init-scripts/init.systemd
+    dest: /etc/systemd/system/tautulli.service
+    remote_src: yes
+    force: no
+  notify: reload systemd
+- name: update systemd service to use an appdata directory
+  lineinfile:
+    path: /etc/systemd/system/tautulli.service
+    regexp: '^ExecStart='
+    line: 'ExecStart=/usr/bin/python3 /opt/Tautulli/Tautulli.py --config /home/tautulli/config.ini --datadir /home/tautulli/data --quiet --nolaunch'
+  notify: reload systemd
+- name: open firewall to load balancer
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    port: '8181'
+    proto: tcp
+  when: 'ufw_fromip is defined'
+  

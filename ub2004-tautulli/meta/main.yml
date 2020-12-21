@@ -1,0 +1,11 @@
+galaxy_info:
+  author: Lyndon Lapierre
+  description: Installs & upgrades Tautulli
+  issue_tracker_url: https://github.com/ljlapierre/ansible-roles/issues
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+  - name: Ubuntu
+    release: focal
+  galaxy_tags: []
+dependencies: []
