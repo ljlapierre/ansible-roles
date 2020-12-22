@@ -37,6 +37,4 @@ Author Information
 ------------------
 
 Lyndon Lapierre  
-https://t.me/ljlapierre  
-https://linkedin.com/in/lyndonlapierre  
-https://github.com/ljlapierre
+[Telegram](https://t.me/ljlapierre) | [LinkedIn](https://linkedin.com/in/lyndonlapierre) | [Github](https://github.com/ljlapierre)
