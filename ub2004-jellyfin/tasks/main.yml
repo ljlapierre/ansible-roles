@@ -1,0 +1,26 @@
+---
+- name: install prerequisite software
+  apt:
+    name:
+      - apt-transport-https
+      - gpg                     # Required for apt_key module
+      - i965-va-driver          # Drivers for GPU
+      - intel-media-va-driver   # Drivers for GPU
+      - vainfo                  # Driver verification
+- name: add jellyfin gpg key
+  apt_key:
+    url: https://repo.jellyfin.org/jellyfin_team.gpg.key
+- name: configure jellyfin repository
+  apt_repository:
+    filename: jellyfin
+    repo: 'deb [arch=amd64] https://repo.jellyfin.org/ubuntu focal main'
+- name: install jellyfin
+  apt:
+    name: jellyfin
+- name: open firewall to load balancer
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    port: '8096'
+    proto: 'tcp'
+  when: 'ufw_fromip is defined'
