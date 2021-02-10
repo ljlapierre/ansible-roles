@@ -5,6 +5,7 @@
 - name: install prerequisites
   apt:
     name: '{{ apt_packages }}'
+    update_cache: yes
   notify: secure mariadb
 - name: disable the default apache site
   file:
@@ -17,3 +18,8 @@
     from_ip: '{{ ufw_fromip }}'
     name: Apache
   when: 'ufw_fromip is defined'
+- name: open firewall to active checks
+  ufw:
+    rule: allow
+    port: '10051'
+    proto: tcp
