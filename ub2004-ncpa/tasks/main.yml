@@ -1,0 +1,57 @@
+---
+- name: install ncpa apt key
+  apt_key:
+    url: https://repo.nagios.com/GPG-KEY-NAGIOS-V2
+- name: install ncpa apt repository
+  apt_repository:
+    repo: deb https://repo.nagios.com/deb/focal /
+    filename: nagios
+- name: install ncpa
+  apt:
+    name: ncpa
+    update_cache: yes
+- name: stop and disable the passive ncpa service
+  systemd:
+    name: ncpa_passive
+    state: stopped
+    enabled: no
+- name: disable check logging
+  lineinfile:
+    path: /usr/local/ncpa/etc/ncpa.cfg
+    regexp: '^check_logging ='
+    line: 'check_logging = 0'
+  notify: restart ncpa
+- name: disable admin gui access
+  lineinfile:
+    path: /usr/local/ncpa/etc/ncpa.cfg
+    regexp: '^admin_gui_access ='
+    line: 'admin_gui_access = 0'
+  notify: restart ncpa
+- name: set community string
+  lineinfile:
+    path: /usr/local/ncpa/etc/ncpa.cfg
+    regexp: '^community_string ='
+    line: 'community_string = {{ ncpa_community_string }}'
+  notify: restart ncpa
+- name: copy plugins
+  copy:
+    src: '{{ item }}'
+    dest: /usr/local/ncpa/plugins/
+    group: nagios
+    mode: 0754
+  with_fileglob:
+    - plugins/*
+  notify: restart ncpa
+- name: configure sudoers rules for ncpa
+  copy:
+    src: sudoers
+    dest: /etc/sudoers.d/ncpa
+    mode: 0440
+    validate: /usr/sbin/visudo -cf %s
+- name: open ncpa port in firewall
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_ncpa }}'
+    port: '5693'
+    proto: tcp
+  when: 'ufw_ncpa is defined'

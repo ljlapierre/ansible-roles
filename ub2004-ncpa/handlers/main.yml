@@ -1,0 +1,5 @@
+---
+- name: restart ncpa
+  systemd:
+    name: ncpa_listener.service
+    state: restarted

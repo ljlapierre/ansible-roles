@@ -1,0 +1,3 @@
+nagios ALL=(ALL) NOPASSWD:/usr/sbin/sanoid --monitor-health
+nagios ALL=(ALL) NOPASSWD:/usr/sbin/sanoid --monitor-capacity
+nagios ALL=(ALL) NOPASSWD:/usr/sbin/sanoid --monitor-snapshots
