@@ -2,6 +2,7 @@
 apt_packages:
   - apache2
   - libapache2-mod-php
+  - libmagickcore-6.q16-6-extra
   - mariadb-server
   - php-apcu
   - php-bcmath
