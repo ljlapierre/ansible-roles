@@ -21,6 +21,10 @@
     line: '{{ item.key }} = {{ item.value }}'
   loop: '{{ php_options | dict2items }}'
   notify: restart apache
+- name: enable apcu for CLI
+  lineinfile:
+    path: /etc/php/7.4/mods-available/apcu.ini
+    line: 'apc.enable_cli=1'
 - name: disable default apache site
   file:
     path: /etc/apache2/sites-enabled/000-default.conf
