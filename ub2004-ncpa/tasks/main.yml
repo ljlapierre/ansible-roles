@@ -1,4 +1,6 @@
 ---
+- name: gather package facts
+  package_facts:
 - name: install ncpa apt key
   apt_key:
     url: https://repo.nagios.com/GPG-KEY-NAGIOS-V2
@@ -33,21 +35,35 @@
     regexp: '^community_string ='
     line: 'community_string = {{ ncpa_community_string }}'
   notify: restart ncpa
-- name: copy plugins
+- name: copy sanoid plugins
   copy:
     src: '{{ item }}'
     dest: /usr/local/ncpa/plugins/
     group: nagios
     mode: 0754
   with_fileglob:
-    - plugins/*
+    - sanoid/*
+  when: "'sanoid' in ansible_facts.packages"
   notify: restart ncpa
-- name: configure sudoers rules for ncpa
+- name: configure sudoers rules for monitoring sanoid
   copy:
     src: sudoers
     dest: /etc/sudoers.d/ncpa
     mode: 0440
     validate: /usr/sbin/visudo -cf %s
+  when: "'sanoid' in ansible_facts.packages"
+- name: install apcupsd prerequisite
+  apt:
+    name: dc
+  when: "'apcupsd' in ansible_facts.packages"
+- name: copy apcupsd plugin
+  copy:
+    src: 'check_apcupsd'
+    dest: /usr/local/ncpa/plugins/
+    group: nagios
+    mode: 0754
+  when: "'apcupsd' in ansible_facts.packages"
+  notify: restart ncpa
 - name: open ncpa port in firewall
   ufw:
     rule: allow
