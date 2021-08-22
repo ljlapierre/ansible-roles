@@ -1,13 +1,14 @@
 ub2004-ncpa 
 =========
 
-Installs & customizes the Nagios NCPA agent for use on an Ubuntu Sanoid system
+Installs & customizes the Nagios NCPA agent for use on an Ubuntu system
 
 Requirements
 ------------
 
 If providing UFW IP, ensure the UFW firewall is enabled prior to running the role
 If you're going to use the Sanoid plugins you should have the sanoid package installed & config file created for your ZFS pools.
+If you're going to use apcupsd for UPS monitoring you should have the apcupsd package installed & configured
 
 Role Variables
 --------------
@@ -40,3 +41,6 @@ Author Information
 
 Lyndon Lapierre  
 [Telegram](https://t.me/ljlapierre) | [LinkedIn](https://linkedin.com/in/lyndonlapierre) | [Github](https://github.com/ljlapierre)
+
+The check_apcupsd plugin was originally written by Martin Toft, original plugin is available on [Martin's website](http://martintoft.dk/?p=check_apcupsd).  
+A slightly outdated version is also available from the [Nagios Exchange](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apcupsd)
