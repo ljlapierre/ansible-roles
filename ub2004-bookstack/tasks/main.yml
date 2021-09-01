@@ -32,11 +32,7 @@
     repo: 'https://github.com/BookStackApp/BookStack.git'
     dest: /var/www/bookstack
     version: release
-  notify:
-    - install bookstack dependencies
-    - upgrade bookstack database
-    - clear bookstack cache
-    - clear bookstack view
+  notify: upgrade bookstack
 - name: set apache-writable folder permissions
   file:
     path: '/var/www/bookstack/{{ item }}'
