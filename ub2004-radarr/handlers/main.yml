@@ -1,0 +1,17 @@
+---
+- name: enable systemd service
+  systemd:
+    name: radarr
+    enabled: yes
+    daemon_reload: yes
+- name: extract radarr
+  unarchive:
+    src: /usr/local/src/radarr.tgz
+    dest: /opt/
+    remote_src: yes
+    owner: root
+    group: root
+- name: restart radarr
+  systemd:
+    name: radarr
+    state: restarted

@@ -1,0 +1,31 @@
+---
+- name: install prerequisites
+  apt:
+    name: '{{ apt_packages }}'
+- name: create service account
+  user:
+    name: radarr
+    home: /var/local/radarr
+    shell: /usr/sbin/nologin
+    system: yes
+    create_home: no
+- name: install systemd service
+  copy:
+    src: radarr.service
+    dest: /etc/systemd/system/
+  notify: enable systemd service
+- name: download latest radarr release
+  get_url:
+    url: "https://radarr.servarr.com/v1/update/master/updatefile?os=linux&runtime=netcore&arch=x64"
+    dest: /usr/local/src/radarr.tgz
+    mode: "0600"
+  notify:
+    - extract radarr
+    - restart radarr
+- name: open firewall to load balancer
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    port: "7878"
+    proto: tcp
+  when: 'ufw_fromip is defined'
