@@ -1,0 +1,6 @@
+[Unit]
+Description=Firefly III recurring transactions
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/php /var/www/firefly/artisan firefly-iii:cron -qn

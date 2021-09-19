@@ -1,0 +1,19 @@
+---
+apt_packages:
+  - apache2
+  - composer
+  - curl
+  - git
+  - libapache2-mod-php
+  - mariadb-server
+  - php
+  - php-bcmath
+  - php-curl
+  - php-gd
+  - php-intl
+  - php-ldap
+  - php-mbstring
+  - php-mysql
+  - php-xml
+  - php-zip
+  - unzip

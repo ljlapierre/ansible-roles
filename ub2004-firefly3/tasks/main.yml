@@ -1,0 +1,82 @@
+---
+- name: install prerequisites
+  apt:
+    name: '{{ apt_packages }}'
+  notify: secure mariadb
+- name: install memcached
+  apt:
+    name:
+      - memcached
+      - php-memcached
+  when: use_memcached
+- name: enable rewrite apache module
+  apache2_module:
+    name: rewrite
+  notify: restart apache
+- name: configure apache for firefly
+  template:
+    src: apache.conf
+    dest: /etc/apache2/sites-available/firefly.conf
+  notify: restart apache
+- name: disable the default apache site
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: restart apache
+- name: enable firefly apache site
+  file:
+    path: /etc/apache2/sites-enabled/firefly.conf
+    state: link
+    src: ../sites-available/firefly.conf
+  notify: restart apache
+- name: create systemd timer
+  copy:
+    src: 'firefly3recur.{{ item }}'
+    dest: '/etc/systemd/system/firefly3recur.{{ item }}'
+  with_items:
+    - service
+    - timer
+  notify: reload systemd
+- name: register locales
+  locale_gen:
+    name: '{{ item }}'
+  with_items: '{{ locales }}'
+- name: pull latest release information
+  uri:
+    url: https://version.firefly-iii.org/index.json
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+  register: versiondata
+  check_mode: no
+- name: download latest stable release
+  git:
+    repo: 'https://github.com/firefly-iii/firefly-iii.git'
+    dest: /var/www/firefly
+    version: '{{ versiondata.json.firefly_iii.stable.version }}'
+  notify: upgrade firefly3
+- name: remove configuration file trigger
+  file:
+    path: /var/www/firefly/.ansibletrigger
+    state: absent
+  notify: upgrade firefly3
+- meta: flush_handlers
+- name: ensure correct storage folder permissions
+  file:
+    path: /var/www/firefly/storage
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+- name: enable systemd timer
+  systemd:
+    name: firefly3recur.timer
+    state: started
+    enabled: yes
+- name: open firewall to load balancer
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    name: Apache
+  when: 'ufw_fromip is defined'

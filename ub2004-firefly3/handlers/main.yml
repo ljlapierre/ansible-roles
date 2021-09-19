@@ -1,0 +1,75 @@
+---
+- name: secure mariadb
+  shell: echo -e "\nn\nY\nY\nY\nY\n" | mysql_secure_installation
+- name: restart apache
+  systemd:
+    name: apache2
+    state: restarted
+- name: reload systemd
+  systemd:
+    daemon-reload: yes
+- name: check for bootstrap cache files
+  find:
+    paths: /var/www/firefly/bootstrap/cache
+    file_type: any
+  register: bootcache
+  listen: upgrade firefly3
+- name: remove bootstrap cache files
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  with_items: "{{ bootcache.files }}"
+  listen: upgrade firefly3
+- name: install firefly3 dependencies
+  shell: composer install --no-dev
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: create configuration file trigger
+  file:
+    path: /var/www/firefly/.ansibletrigger
+    state: touch
+  listen: upgrade firefly3
+- name: ensure configuration file exists. If this fails configure and re-run.
+  file:
+    path: /var/www/firefly/.env
+    state: file
+    owner: root
+    group: www-data
+    mode: '0640'
+  listen: upgrade firefly3
+- name: clear cache
+  shell: php artisan cache:clear -qn
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: initialize database
+  shell: php artisan migrate --seed -qn
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: decrypt database
+  shell: php artisan firefly-iii:decrypt-all -qn
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: upgrade database
+  shell: php artisan firefly-iii:upgrade-database -qn
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: install passport
+  shell: php artisan passport:install -qn
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: clear cache
+  shell: php artisan cache:clear -qn
+  args:
+    chdir: /var/www/firefly
+  listen: upgrade firefly3
+- name: remove configuration file trigger
+  file:
+    path: /var/www/firefly/.ansibletrigger
+    state: absent
+  listen: upgrade firefly3

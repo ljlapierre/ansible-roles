@@ -1,0 +1,8 @@
+[Unit]
+Description=Firefly III recurring transactions
+
+[Timer]
+OnCalendar=daily
+
+[Install]
+WantedBy=timers.target
