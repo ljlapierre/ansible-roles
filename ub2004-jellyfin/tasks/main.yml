@@ -17,6 +17,11 @@
 - name: install jellyfin
   apt:
     name: jellyfin
+- name: add jellyfin user to video group for hw acceleration
+  user:
+    name: jellyfin
+    groups: video
+    append: yes
 - name: open firewall to load balancer
   ufw:
     rule: allow
