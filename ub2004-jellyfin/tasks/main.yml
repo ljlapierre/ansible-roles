@@ -5,7 +5,7 @@
       - apt-transport-https
       - gpg                     # Required for apt_key module
       - i965-va-driver          # Drivers for GPU
-      - intel-media-va-driver   # Drivers for GPU
+      - intel-media-va-driver-non-free   # Drivers for GPU
       - vainfo                  # Driver verification
 - name: add jellyfin gpg key
   apt_key:

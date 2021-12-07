@@ -4,7 +4,7 @@
     name:
       - gpg                     # Required for apt_key module
       - i965-va-driver          # Drivers for GPU
-      - intel-media-va-driver   # Drivers for GPU
+      - intel-media-va-driver-non-free   # Drivers for GPU
       - vainfo                  # Driver verification
 - name: add plex gpg key
   apt_key:
