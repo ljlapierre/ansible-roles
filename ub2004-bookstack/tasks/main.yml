@@ -33,6 +33,7 @@
     dest: /var/www/bookstack
     version: release
   notify: upgrade bookstack
+  tags: update
 - name: set apache-writable folder permissions
   file:
     path: '/var/www/bookstack/{{ item }}'
