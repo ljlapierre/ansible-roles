@@ -1,12 +1,13 @@
 ---
 - name: gather package facts
   package_facts:
-- name: install ncpa apt key
-  apt_key:
+- name: download ncpa apt key
+  get_url:
     url: https://repo.nagios.com/GPG-KEY-NAGIOS-V2
+    dest: /usr/share/keyrings/GPG-KEY-NAGIOS-V2
 - name: install ncpa apt repository
   apt_repository:
-    repo: deb https://repo.nagios.com/deb/focal /
+    repo: "deb [signed-by=/usr/share/keyrings/GPG-KEY-NAGIOS-V2] https://repo.nagios.com/deb/focal /"
     filename: nagios
 - name: install ncpa
   apt:

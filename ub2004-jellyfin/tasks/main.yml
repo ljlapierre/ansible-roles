@@ -7,13 +7,14 @@
       - i965-va-driver          # Drivers for GPU
       - intel-media-va-driver-non-free   # Drivers for GPU
       - vainfo                  # Driver verification
-- name: add jellyfin gpg key
-  apt_key:
+- name: download jellyfin gpg key
+  get_url:
     url: https://repo.jellyfin.org/jellyfin_team.gpg.key
+    dest: /usr/share/keyrings/jellyfin_team.gpg.key
 - name: configure jellyfin repository
   apt_repository:
     filename: jellyfin
-    repo: 'deb [arch=amd64] https://repo.jellyfin.org/ubuntu focal main'
+    repo: 'deb [signed-by=/usr/share/keyrings/jellyfin_team.gpg.key arch=amd64] https://repo.jellyfin.org/ubuntu focal main'
 - name: install jellyfin
   apt:
     name: jellyfin

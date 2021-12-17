@@ -6,13 +6,14 @@
       - i965-va-driver          # Drivers for GPU
       - intel-media-va-driver-non-free   # Drivers for GPU
       - vainfo                  # Driver verification
-- name: add plex gpg key
-  apt_key:
+- name: download plex gpg key
+  get_url:
     url: https://downloads.plex.tv/plex-keys/PlexSign.key
+    dest: /usr/share/keyrings/PlexSign.key
 - name: configure plex repository
   apt_repository:
     filename: plexmediaserver
-    repo: 'deb https://downloads.plex.tv/repo/deb/ public main'
+    repo: 'deb [signed-by=/usr/share/keyrings/PlexSign.key] https://downloads.plex.tv/repo/deb/ public main'
 - name: install plex
   apt:
     name: plexmediaserver
