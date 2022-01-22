@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
-cat /etc/letsencrypt/live/{{ site }}/fullchain.pem /etc/letsencrypt/live/{{ site }}/privkey.pem > /etc/haproxy/ssl/{{ site }}.pem
-systemctl reload haproxy
+cd /etc/letsencrypt/live
+for i in *; do
+	if [ "$i" != "README" ]; then
+		/usr/bin/cat "/etc/letsencrypt/live/$i/fullchain.pem" "/etc/letsencrypt/live/$i/privkey.pem" > "/etc/haproxy/ssl/$i.pem"
+	fi
+done
+/usr/bin/systemctl reload haproxy.service
