@@ -1,0 +1,27 @@
+---
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+- name: extract release
+  unarchive:
+    src: /usr/local/src/bazarr.zip
+    dest: /opt/bazarr
+    remote_src: yes
+    owner: bazarr
+    group: bazarr
+- name: fix permissions
+  file:
+    path: /opt/bazarr
+    state: directory
+    recurse: yes
+    owner: bazarr
+    group: bazarr
+- name: install requirements
+  pip:
+    chdir: /opt/bazarr
+    requirements: requirements.txt
+- name: restart bazarr
+  systemd:
+    name: bazarr.service
+    state: restarted
+    enabled: yes

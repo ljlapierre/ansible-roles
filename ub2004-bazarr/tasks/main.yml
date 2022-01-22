@@ -1,0 +1,46 @@
+---
+- name: install prerequisites
+  apt:
+    name:
+      - python3-dev
+      - python3-pip
+      - python3-distutils
+      - unzip
+- name: create service account group
+  group:
+    name: bazarr
+    system: yes
+- name: create service account user
+  user:
+    name: bazarr
+    group: bazarr
+    system: yes
+    shell: /usr/sbin/nologin
+- name: create application directory
+  file:
+    path: /opt/bazarr
+    state: directory
+    owner: bazarr
+    group: bazarr
+- name: pull latest release
+  get_url:
+    url: https://github.com/morpheus65535/bazarr/releases/latest/download/bazarr.zip
+    dest: /usr/local/src/bazarr.zip
+    mode: '0600'
+  notify:
+    - extract release
+    - install requirements
+    - fix permissions
+    - restart bazarr
+- name: install systemd service
+  copy:
+    src: bazarr.service
+    dest: /etc/systemd/system/bazarr.service
+  notify: reload systemd
+- name: open firewall to load balancer
+  ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    port: "6767"
+    proto: tcp
+  when: 'ufw_fromip is defined'
