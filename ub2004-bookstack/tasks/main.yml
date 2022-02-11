@@ -3,6 +3,18 @@
   apt:
     name: '{{ apt_packages }}'
   notify: secure mariadb
+- name: ensure system composer package is absent
+  apt:
+    name: composer
+    state: absent
+- name: download composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /usr/local/src/composer-installer
+  register: composerinstaller
+- name: run composer installer
+  shell: php /usr/local/src/composer-installer --install-dir /usr/local/bin --filename composer
+  when: composerinstaller.changed
 - name: install wkhtmltopdf
   apt:
     deb: '{{ wkhtmltopdf_deburl }}'

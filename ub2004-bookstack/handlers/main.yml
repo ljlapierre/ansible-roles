@@ -9,6 +9,8 @@
   shell: composer install --no-dev
   args:
     chdir: /var/www/bookstack
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1
   listen: upgrade bookstack
 - name: upgrade bookstack database
   shell: php artisan migrate --force --no-interaction

@@ -1,8 +1,6 @@
 ---
 apt_packages:
   - apache2
-  - composer
-  - curl
   - git
   - libapache2-mod-php
   - mariadb-server
