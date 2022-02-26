@@ -13,7 +13,7 @@ Role Variables
 
 ##### ```ufw_fromip: '192.168.1.100'```
 *Optional*  
-If you're using UFW firewall in Ubuntu, you can provide an IP or subnet reference to allow to talk to Bookstack. If using a load balancer, you may want to restrict incoming traffic to that.
+If you're using UFW firewall in Ubuntu, you can provide an IP or subnet reference to allow to talk to Radarr. If using a load balancer, you may want to restrict incoming traffic to that.
 
 Example Playbook
 ----------------
