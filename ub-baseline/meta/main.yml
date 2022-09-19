@@ -1,11 +1,10 @@
 galaxy_info:
   author: Lyndon Lapierre
-  description: An opinionated baseline run on all of my Ubuntu 20.04 servers & LXD containers
+  description: An opinionated baseline run on all of my Ubuntu servers & LXD containers
   issue_tracker_url: https://github.com/ljlapierre/ansible-roles/issues
   license: MIT
   min_ansible_version: 2.9
   platforms:
   - name: Ubuntu
-    release: focal
   galaxy_tags: []
 dependencies: []

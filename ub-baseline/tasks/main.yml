@@ -1,0 +1,13 @@
+---
+- name: set timezone
+  timezone:
+    name: '{{ timezone }}'
+  when: 'timezone is defined'
+- name: install baseline packages
+  apt:
+    name:
+      - bash-completion
+      - ufw
+- name: enable firewall
+  ufw:
+    state: enabled
