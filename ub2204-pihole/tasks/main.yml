@@ -1,0 +1,34 @@
+---
+- name: install and configure cloudflared
+  ansible.builtin.import_tasks: cloudflared.yml
+  tags: cloudflared
+- name: validate backup mountpoint
+  ansible.builtin.command: /bin/mountpoint -q /mnt/backups
+  changed_when: False
+  check_mode: no
+- name: install pi-hole backup services
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+  loop:
+    - pihole-backups.service
+    - pihole-backups.timer
+  notify:
+    - restart pihole-backups timer
+- name: download pi-hole installer
+  ansible.builtin.get_url:
+    url: https://install.pi-hole.net
+    dest: /root/basic-install.sh
+    mode: '0755'
+- name: open the firewall - DNS
+  community.general.ufw:
+    rule: allow
+    direction: in
+    to_port: "53"
+- name: open the firewall - HTTP
+  community.general.ufw:
+    rule: allow
+    direction: in
+    from_ip: "{{ ufw_fromip }}"
+    to_port: "80"
+    proto: tcp

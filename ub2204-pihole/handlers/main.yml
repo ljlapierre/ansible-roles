@@ -1,0 +1,13 @@
+---
+- name: restart cloudflared
+  ansible.builtin.systemd:
+    name: cloudflared.service
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+- name: restart pihole-backups timer
+  ansible.builtin.systemd:
+    name: pihole-backups.timer
+    state: started
+    enabled: yes
+    daemon_reload: yes

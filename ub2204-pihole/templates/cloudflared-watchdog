@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+watchdog() {
+    while(true); do
+        result=$(dig @127.0.0.1 -p5053 {{ dns_test_address }} +short +time=1 +tries=3)
+        if [[ $? -eq 0 && -n "$result" ]]; then
+            /bin/systemd-notify WATCHDOG=1;
+        fi
+        sleep 10
+    done
+}
+
+watchdog &

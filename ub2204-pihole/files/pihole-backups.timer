@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup pihole data
+
+[Timer]
+OnCalendar=17:30
+
+[Install]
+WantedBy=timers.target

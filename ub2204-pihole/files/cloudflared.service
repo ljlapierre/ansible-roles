@@ -1,0 +1,16 @@
+[Unit]
+Description=cloudflared DNS over HTTPS proxy
+After=syslog.target network-online.target
+
+[Service]
+Type=simple
+User=cloudflared
+ExecStart=/usr/bin/cloudflared proxy-dns --port 5053 --upstream https://security.cloudflare-dns.com/dns-query
+ExecStartPost=/usr/local/bin/cloudflared-watchdog
+Restart=always
+WatchdogSec=30
+NotifyAccess=all
+KillSignal=SIGKILL
+
+[Install]
+WantedBy=multi-user.target

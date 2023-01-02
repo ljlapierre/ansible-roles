@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup pihole data
+
+[Service]
+Type=oneshot
+WorkingDirectory=/mnt/backups
+ExecStart=/usr/local/bin/pihole -a -t
+ExecStart=/usr/bin/find /mnt/backups/ -type f -mtime +7 -name '*.tar.gz' -delete

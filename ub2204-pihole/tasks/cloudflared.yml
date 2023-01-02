@@ -1,0 +1,35 @@
+---
+- name: download cloudflare GPG key
+  ansible.builtin.get_url:
+    url: https://pkg.cloudflare.com/cloudflare-main.gpg
+    dest: /usr/share/keyrings/cloudflare-main.gpg
+- name: add cloudflare repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared {{ ansible_distribution_release }} main"
+    filename: cloudflared
+- name: install cloudflared and dig utility
+  ansible.builtin.apt:
+    name:
+      - bind9-dnsutils
+      - cloudflared
+    state: present
+- name: create cloudflared service account
+  ansible.builtin.user:
+    name: cloudflared
+    system: yes
+    create_home: no
+    shell: /usr/sbin/nologin
+- name: install cloudflared watchdog script
+  ansible.builtin.template:
+    src: cloudflared-watchdog
+    dest: /usr/local/bin/cloudflared-watchdog
+    owner: cloudflared
+    group: cloudflared
+    mode: '0700'
+- name: install cloudflared service
+  ansible.builtin.copy:
+    src: cloudflared.service
+    dest: /etc/systemd/system/cloudflared.service
+  notify:
+    - restart cloudflared
+- ansible.builtin.meta: flush_handlers
