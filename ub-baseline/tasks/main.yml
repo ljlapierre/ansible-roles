@@ -1,13 +1,13 @@
 ---
 - name: set timezone
-  timezone:
+  community.general.timezone:
     name: '{{ timezone }}'
   when: 'timezone is defined'
 - name: install baseline packages
-  apt:
+  ansible.builtin.apt:
     name:
       - bash-completion
       - ufw
 - name: enable firewall
-  ufw:
+  community.general.ufw:
     state: enabled
