@@ -1,0 +1,34 @@
+---
+- name: secure mariadb
+  shell: echo -e "\nn\nY\nY\nY\nY\n" | mysql_secure_installation
+- name: restart apache
+  systemd:
+    name: apache2
+    state: restarted
+- name: install bookstack dependencies
+  shell: composer install --no-dev
+  args:
+    chdir: /var/www/bookstack
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1
+  listen: upgrade bookstack
+- name: upgrade bookstack database
+  shell: php artisan migrate --force --no-interaction
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
+- name: clear bookstack cache
+  shell: 'php artisan cache:clear'
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
+- name: clear bookstack config
+  shell: 'php artisan config:clear'
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
+- name: clear bookstack view
+  shell: 'php artisan view:clear'
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack

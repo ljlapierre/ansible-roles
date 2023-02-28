@@ -1,0 +1,18 @@
+---
+apt_packages:
+  - apache2
+  - git
+  - libapache2-mod-php
+  - mariadb-server
+  - memcached
+  - php
+  - php-curl
+  - php-fpm
+  - php-gd
+  - php-ldap
+  - php-memcached
+  - php-mbstring
+  - php-mysql
+  - php-xml
+  - php-zip
+  - unzip
