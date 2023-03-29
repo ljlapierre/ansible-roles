@@ -6,6 +6,7 @@
       - i965-va-driver          # Drivers for GPU
       - intel-media-va-driver-non-free   # Drivers for GPU
       - vainfo                  # Driver verification
+      - wget                    # Plex post-install script wants wget
 - name: download plex gpg key
   get_url:
     url: https://downloads.plex.tv/plex-keys/PlexSign.key
