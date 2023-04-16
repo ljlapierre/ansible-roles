@@ -1,0 +1,79 @@
+---
+- name: install prerequisites
+  ansible.builtin.apt:
+    name: '{{ apt_packages }}'
+  notify: secure mariadb
+  tags: apt,migrate
+- name: install apache config
+  ansible.builtin.template:
+    src: apache.conf
+    dest: /etc/apache2/sites-available/nextcloud.conf
+  notify: restart apache
+  tags: migrate
+- name: enable required apache modules
+  community.general.apache2_module:
+    name: '{{ item }}'
+  with_items: '{{ apache_modules }}'
+  notify: restart apache
+  tags: migrate
+- name: retrieve installed php configuration directories
+  ansible.builtin.find:
+    path: /etc/php
+    file_type: directory
+    depth: false
+  register: php
+  tags: php,migrate
+- name: configure php options for nextcloud
+  ansible.builtin.lineinfile:
+    path: "{{ item[0][0].path }}/{{ item[0][1] }}/php.ini"
+    regexp: '^{{ item[1].key }} ='
+    line: '{{ item[1].key }} = {{ item[1].value }}'
+  loop: "{{ php.files | product(['apache2', 'cli']) | product( php_options | dict2items ) | list }}"
+  notify: restart apache
+  tags: php,migrate
+- name: enable apcu for CLI
+  ansible.builtin.lineinfile:
+    path: "{{ item.path }}/mods-available/apcu.ini"
+    line: 'apc.enable_cli=1'
+  loop: "{{ php.files  }}"
+  tags: php,migrate
+- name: disable default apache site
+  ansible.builtin.file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+  notify: restart apache
+  tags: migrate
+- name: enable nextcloud apache site
+  ansible.builtin.file:
+    path: /etc/apache2/sites-enabled/nextcloud.conf
+    src: ../sites-available/nextcloud.conf
+    state: link
+  notify: restart apache
+  tags: migrate
+- name: configure nextcloud cron job
+  ansible.builtin.cron:
+    name: nextcloud
+    cron_file: nextcloud
+    minute: '*/5'
+    user: www-data
+    job: php --define apc.enable_cli=1 -f /var/www/nextcloud/cron.php
+  tags: migrate
+- name: open firewall to load balancer
+  community.general.ufw:
+    rule: allow
+    from_ip: '{{ ufw_fromip }}'
+    name: Apache
+  when: 'ufw_fromip is defined'
+  tags: migrate
+- name: download nextcloud source tar
+  ansible.builtin.get_url:
+    url: https://download.nextcloud.com/server/releases/latest.tar.bz2
+    dest: /usr/local/src/nextcloud.tar.bz2
+    checksum: md5:https://download.nextcloud.com/server/releases/latest.tar.bz2.md5
+- name: untar nextcloud
+  ansible.builtin.unarchive:
+    src: /usr/local/src/nextcloud.tar.bz2
+    dest: /var/www
+    remote_src: yes
+    owner: www-data
+    group: www-data

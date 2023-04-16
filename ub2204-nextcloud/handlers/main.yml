@@ -1,0 +1,7 @@
+---
+- name: secure mariadb
+  ansible.builtin.shell: echo -e "\nn\nY\nY\nY\nY\n" | mysql_secure_installation
+- name: restart apache
+  ansible.builtin.systemd:
+    name: apache2
+    state: restarted
