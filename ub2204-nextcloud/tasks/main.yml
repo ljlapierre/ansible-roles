@@ -65,6 +65,23 @@
     name: Apache
   when: 'ufw_fromip is defined'
   tags: migrate
+- name: add apache2 user to redis group
+  ansible.builtin.user:
+    name: www-data
+    groups: redis
+    append: true
+  notify: restart apache for unix socket access
+- name: configure redis
+  ansible.builtin.lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: "^#*\\s*{{ item.option }} "
+    line: "{{ item.option }} {{ item.value }}"
+  loop:
+    - option: unixsocket
+      value: /var/run/redis/redis-server.sock
+    - option: unixsocketperm
+      value: '770'
+  notify: restart redis
 - name: download nextcloud source tar
   ansible.builtin.get_url:
     url: https://download.nextcloud.com/server/releases/latest.tar.bz2

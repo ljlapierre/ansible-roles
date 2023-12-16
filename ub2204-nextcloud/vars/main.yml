@@ -13,8 +13,10 @@ apt_packages:
   - php-intl
   - php-mbstring
   - php-mysql
+  - php-redis
   - php-xml
   - php-zip
+  - redis-server
 apache_modules:
   - dir
   - env

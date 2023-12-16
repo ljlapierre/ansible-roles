@@ -5,3 +5,7 @@
   ansible.builtin.systemd:
     name: apache2
     state: restarted
+- name: restart redis
+  ansible.builtin.systemd:
+    name: redis-server
+    state: restarted
