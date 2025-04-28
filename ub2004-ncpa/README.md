@@ -40,7 +40,7 @@ Author Information
 ------------------
 
 Lyndon Lapierre  
-[Telegram](https://t.me/ljlapierre) | [LinkedIn](https://linkedin.com/in/lyndonlapierre) | [Github](https://github.com/ljlapierre)
+[LinkedIn](https://linkedin.com/in/lyndonlapierre) | [Github](https://github.com/ljlapierre)
 
 The check_apcupsd plugin was originally written by Martin Toft, original plugin is available on [Martin's website](http://martintoft.dk/?p=check_apcupsd).  
 A slightly outdated version is also available from the [Nagios Exchange](https://exchange.nagios.org/directory/Plugins/Hardware/UPS/APC/check_apcupsd)
