@@ -1,0 +1,43 @@
+---
+# - name: secure mariadb
+#   shell: echo -e "\nn\nY\nY\nY\nY\n" | mysql_secure_installation
+
+- name: install composer
+  ansible.builtin.command: php /usr/local/src/composer-installer --install-dir /usr/local/bin --filename composer
+
+- name: restart apache
+  ansible.builtin.systemd_service:
+    name: apache2
+    state: restarted
+
+- name: install bookstack dependencies
+  ansible.builtin.command: composer install --no-dev
+  args:
+    chdir: /var/www/bookstack
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: 1
+  listen: upgrade bookstack
+
+- name: upgrade bookstack database
+  ansible.builtin.command: php artisan migrate --force --no-interaction
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
+
+- name: clear bookstack cache
+  ansible.builtin.command: 'php artisan cache:clear'
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
+
+- name: clear bookstack config
+  ansible.builtin.command: 'php artisan config:clear'
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
+
+- name: clear bookstack view
+  ansible.builtin.command: 'php artisan view:clear'
+  args:
+    chdir: /var/www/bookstack
+  listen: upgrade bookstack
