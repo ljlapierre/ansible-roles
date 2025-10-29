@@ -1,6 +1,6 @@
 ---
-# - name: secure mariadb
-#   shell: echo -e "\nn\nY\nY\nY\nY\n" | mysql_secure_installation
+- name: secure mariadb
+  ansible.builtin.shell: echo -e "\nn\nn\nY\nY\nY\nY\n" | mariadb-secure-installation
 
 - name: install composer
   ansible.builtin.command: php /usr/local/src/composer-installer --install-dir /usr/local/bin --filename composer

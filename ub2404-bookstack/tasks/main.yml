@@ -1,8 +1,28 @@
 ---
+- name: install mariadb-server
+  ansible.builtin.apt:
+    name: mariadb-server
+  notify: secure mariadb
+
 - name: install prerequisites
   ansible.builtin.apt:
-    name: '{{ apt_packages }}'
-  notify: secure mariadb
+    name:
+      - apache2
+      - git
+      - libapache2-mod-php
+      - memcached
+      - php
+      - php-curl
+      - php-fpm
+      - php-gd
+      - php-ldap
+      - php-memcached
+      - php-mbstring
+      - php-mysql
+      - php-xml
+      - php-zip
+      - unzip
+      - weasyprint
 
 - name: ensure system composer package is absent
   ansible.builtin.apt:
@@ -52,18 +72,19 @@
   tags: update
 
 - name: set apache-writable folder permissions
-  file:
-    path: '/var/www/bookstack/{{ item }}'
+  ansible.builtin.file:
+    path: /var/www/bookstack/{{ item }}
     state: directory
     owner: www-data
     group: www-data
     recurse: yes
-  with_items:
+  loop:
     - bootstrap/cache
     - public/uploads
     - storage
+
 - name: open firewall to load balancer
-  ufw:
+  community.general.ufw:
     rule: allow
     from_ip: '{{ ufw_fromip }}'
     name: Apache
