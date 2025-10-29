@@ -11,10 +11,10 @@ If providing UFW IP, ensure the UFW firewall is enabled prior to running the rol
 Role Variables
 --------------
 
-##### ```site: 'bookstack.example.com'```
+##### ```site: bookstack.example.com```
 The site variable configures the FQDN into the Apache site config
 
-##### ```ufw_fromip: '192.168.1.100'```
+##### ```ufw_fromip: 192.168.1.100```
 *Optional*  
 If you're using UFW firewall in Ubuntu, you can provide an IP or subnet reference to allow to talk to Bookstack. If using a load balancer, you may want to restrict incoming traffic to that.
 
@@ -24,8 +24,8 @@ Example Playbook
     - hosts: bookstack-server
       become: yes
       vars:
-        site: 'bookstack.example.com'
-        ufw_fromip: '192.168.1.100'
+        site: bookstack.example.com
+        ufw_fromip: 192.168.1.100
       roles:
         - ub2404-bookstack
 
