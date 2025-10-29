@@ -1,7 +1,7 @@
 ub2004-baseline
 =========
 
-An opinionated baseline run on all of my Ubuntu 20.04 servers & LXD containers
+An opinionated baseline run on all of my Ubuntu servers & Incus containers
 
 License
 -------
